@@ -29,3 +29,7 @@ MUXClock_mode = false
 auto_compression = true
 # optional: remove p% faults
 remove_fault = 50
+
+[SIMULATION_OPTION]
+simulation_sequential = true
+simulation_sequential_nodrop = false

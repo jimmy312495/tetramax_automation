@@ -33,6 +33,10 @@ from typing import Optional
 # # optional: remove p% faults
 # remove_fault = 50
 
+# [SIMULATION_OPTION]
+# simulation_sequential = true
+# simulation_sequential_nodrop = false
+
 class ATPGConfig:
     def __init__(self, 
                  top_module: str,
@@ -51,7 +55,9 @@ class ATPGConfig:
                  capture_cycle: Optional[int],
                  MUXClock_mode: bool,     # Changed from Optional[int]
                  auto_compression: bool,   # Changed from Optional[int]
-                 remove_fault: Optional[int]):
+                 remove_fault: Optional[int],
+                 simulation_sequential: bool,
+                 simulation_sequential_nodrop: bool):
         self.top_module = top_module
         self.netlist_file = netlist_file
         self.tech_library = tech_library
@@ -69,6 +75,8 @@ class ATPGConfig:
         self.MUXClock_mode = MUXClock_mode
         self.auto_compression = auto_compression
         self.remove_fault = remove_fault
+        self.simulation_sequential = simulation_sequential
+        self.simulation_sequential_nodrop = simulation_sequential_nodrop
 
     def __repr__(self):
         return (f"ATPGConfig(top_module={self.top_module}, netlist_file={self.netlist_file}, tech_library={self.tech_library}, "
@@ -78,7 +86,8 @@ class ATPGConfig:
                 f"fault_model={self.fault_model}, pattern_specification={self.pattern_specification}, "
                 f"launch_cycle={self.launch_cycle}, capture_cycle={self.capture_cycle}, "
                 f"MUXClock_mode={self.MUXClock_mode}, fault_collapsing={self.fault_collapsing}, "
-                f"auto_compression={self.auto_compression}, remove_fault={self.remove_fault})")
+                f"auto_compression={self.auto_compression}, remove_fault={self.remove_fault}, "
+                f"simulation_sequential={self.simulation_sequential}, simulation_sequential_nodrop={self.simulation_sequential_nodrop})")
 
 def parse_config(file_path: str) -> ATPGConfig:
     config = configparser.ConfigParser()
@@ -97,6 +106,7 @@ def parse_config(file_path: str) -> ATPGConfig:
     pattern_section = config["PATTERN_OPTIONS"]
     transition_section = config["TRANSITION_FAULT_OPTIONS"]
     general_section = config["ATPG_GENERAL_OPTIONS"]
+    simulation_section = config["SIMULATION_OPTION"]
 
     return ATPGConfig(
         # DEFAULT section
@@ -120,13 +130,17 @@ def parse_config(file_path: str) -> ATPGConfig:
         fault_collapsing=parse_bool(pattern_section.get("fault_collapsing")),
         
         # TRANSITION_FAULT_OPTIONS section
-        launch_cycle=transition_section.get("launch_cycle"),
-        capture_cycle=parse_optional_int(transition_section.get("capture_cycle")),
+        launch_cycle=transition_section.get("launch_cycle", "any"),
+        capture_cycle=parse_optional_int(transition_section.get("capture_cycle", "4")),
         MUXClock_mode=parse_bool(transition_section.get("MUXClock_mode")),
         
         # ATPG_GENERAL_OPTIONS section
         auto_compression=parse_bool(general_section.get("auto_compression")),
-        remove_fault=parse_optional_int(general_section.get("remove_fault"))
+        remove_fault=parse_optional_int(general_section.get("remove_fault")),
+
+        # SIMULATION_OPTION section
+        simulation_sequential=parse_bool(simulation_section.get("simulation_sequential")),
+        simulation_sequential_nodrop=parse_bool(simulation_section.get("simulation_sequential_nodrop"))
     )
 
 def main():
