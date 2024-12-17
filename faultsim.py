@@ -55,7 +55,7 @@ class BaseFaultSimScriptGenerator:
     def set_delay_option(self, file):
         pass
         
-    def output(self, file):
+    def write_output(self, file):
         # Write outputs
         file.write(f"report_summaries > {self.config.summary_file}\n\n")
         file.write(f"write_faults {self.config.faults_file} -all -replace\n\n")
@@ -94,7 +94,7 @@ class BaseFaultSimScriptGenerator:
             self.add_fault(file)
             self.run_simulation(file)
             self.run_fault_sim(file)
-            self.output(file)
+            self.write_output(file)
 
 class StuckFaultSimScriptGenerator(BaseFaultSimScriptGenerator):
     def __init__(self, config: ATPGConfig):
