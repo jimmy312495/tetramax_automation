@@ -1,0 +1,31 @@
+[DEFAULT]
+top_module = s1423
+netlist_file = ./Netlist/s1423_dft.v
+tech_library =  /home/raid7_2/course/cvsd/CBDK_IC_Contest_v2.5/Verilog/tsmc13_neg.v
+synthesized_files = ../Test_s1423/Netlist/s1423_syn.v
+spf_file = ../Test_s1423/Netlist/s1423.spf
+faults_file = ../Test_s1423/Netlist/s1423.fault
+summary_file = ../Test_s1423/Netlist/s1423_ATPG_report.rpt
+patterns_file = ../Test_s1423/Netlist/s1423.stil
+
+[SCAN_CHAIN_FAULT]
+# detect scan chain fault
+scan_fault_detect = false
+
+# supoorted fault types: stuck, transition, iddq, iddq_bridging, path_delay, hold_time, bridging, dynamic_bridging, dual_transition_bridging
+[FAULT_TYPES]
+fault_model = transition
+
+[PATTERN_OPTIONS]
+pattern_specification = full
+fault_collapsing = true
+
+[TRANSITION_FAULT_OPTIONS]
+launch_cycle = any
+capture_cycle = 2
+MUXClock_mode = false
+
+[ATPG_GENERAL_OPTIONS]
+auto_compression = true
+# optional: remove p% faults
+remove_fault = 50
