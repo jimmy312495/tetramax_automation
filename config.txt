@@ -30,6 +30,9 @@ launch_cycle = any
 capture_cycle = 4
 MUXClock_mode = false
 
+[IDDQ_FAULT_OPTIONS]
+iddq_max_patterns = 20
+
 [ATPG_GENERAL_OPTIONS]
 auto_compression = true
 # optional: remove p% faults

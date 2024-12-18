@@ -106,7 +106,24 @@ class TransitionATPGScriptGenerator(BaseATPGScriptGenerator):
     
     def set_atpg_option(self, file):
         file.write(f"set_atpg -capture {self.config.capture_cycle}\n\n")
+
+class IDDQATPGScriptGenerator(BaseATPGScriptGenerator):
+    def __init__(self, config: Config):
+        super().__init__(config)
+        if config.capture_cycle == None:
+            self.config.capture_cycle = 4
+        assert(self.config.capture_cycle >= 2 and self.config.capture_cycle <= 10)
         
+    def set_fault_option(self, file):
+        file.write("set_faults -model iddq\n")
+        file.write("set_iddq -toggle\n\n")
+    
+    def set_delay_option(self, file):
+        file.write("set_delay -launch system_clock\n\n")
+    
+    def set_atpg_option(self, file):
+        file.write(f"set_atpg -patterns {self.config.iddq_max_patterns}\n\n")
+
 class BridgingATPGScriptGenerator(BaseATPGScriptGenerator):
     def __init__(self, config: Config):
         super().__init__(config)
