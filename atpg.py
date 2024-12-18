@@ -138,6 +138,7 @@ class BridgingATPGScriptGenerator(BaseATPGScriptGenerator):
     
     def set_atpg_option(self, file):
         # Set ATPG
+        file.write("set_atpg -optimize_bridge_strengths\n")
         file.write("set_atpg -merge high \n")
 
 
