@@ -3,9 +3,9 @@ top_module = s1423
 netlist_file = ./Netlist/s1423_dft.v
 tech_library =  /home/raid7_2/course/cvsd/CBDK_IC_Contest_v2.5/Verilog/tsmc13_neg.v
 synthesized_files = ../Test_s1423/Netlist/s1423_syn.v
-spf_file = ../Test_s1423/Netlist/s1423.spf
+spf_file = ../Test_s1423/Netlist/s1423_dft.spf
 faults_file = ../Test_s1423/Netlist/s1423.fault
-summary_file = ../Test_s1423/Netlist/s1423_ATPG_report.rpt
+summary_file = ../Test_s1423/Netlist/s1423_report.rpt
 patterns_file = ../Test_s1423/Netlist/s1423.stil
 
 [SCAN_CHAIN_INSERT]

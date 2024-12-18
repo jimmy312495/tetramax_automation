@@ -4,6 +4,7 @@ from config_parser import Config, parse_config
 class BaseFaultSimScriptGenerator:
     def __init__(self, config: Config):
         self.config = config
+        self.config.summary_file = self.config.summary_file.replace('_report', '_FS_report')
     
     def read_netlist_model(self, file):
         file.write("""##############################################
@@ -57,6 +58,7 @@ class BaseFaultSimScriptGenerator:
         
     def write_output(self, file):
         # Write outputs
+        file.write(f"report_summaries\n")
         file.write(f"report_summaries > {self.config.summary_file}\n\n")
         file.write(f"write_faults {self.config.faults_file} -all -replace\n\n")
         file.write("exit")

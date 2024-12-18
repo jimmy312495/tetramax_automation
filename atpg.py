@@ -4,6 +4,7 @@ from config_parser import Config, parse_config
 class BaseATPGScriptGenerator:
     def __init__(self, config: Config):
         self.config = config
+        self.config.summary_file = self.config.summary_file.replace('_report', '_ATPG_report')
     
     def set(self, file):
         file.write("""##############################################
@@ -55,6 +56,7 @@ class BaseATPGScriptGenerator:
         
     def write_output(self, file):
         # Write outputs
+        file.write(f"report_summaries\n")
         file.write(f"report_summaries > {self.config.summary_file}\n\n")
         file.write(f"write_faults {self.config.faults_file} -all -replace\n\n")
         file.write(f"write_patterns {self.config.patterns_file} -format STIL -replace\n\n")
