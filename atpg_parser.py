@@ -11,6 +11,11 @@ from typing import Optional
 # summary_file = ../Test_s1423/Netlist/s1423_ATPG_report.rpt
 # patterns_file = ../Test_s1423/Netlist/s1423.stil
 
+# [SCAN_CHAIN_INSERT]
+# # supported scan chain type: <multiplexed_flip_flop | clocked_scan | lssd | aux_clock_lssd | combinational | or none>
+# scan_style = multiplexed_flip_flop
+# num_scan_chain = 8
+
 # # detect scan chain fault
 # [ SCAN_CHAIN_FAULT ]
 # scan_fault_detect = false
@@ -47,6 +52,8 @@ class ATPGConfig:
                  faults_file: str, 
                  summary_file: str, 
                  patterns_file: str,
+                 scan_style: str,
+                 num_scan_chain: int,
                  scan_fault_detect: bool, 
                  fault_model: str, 
                  pattern_specification: str, 
@@ -66,6 +73,8 @@ class ATPGConfig:
         self.faults_file = faults_file
         self.summary_file = summary_file
         self.patterns_file = patterns_file
+        self.scan_style = scan_style
+        self.num_scan_chain = num_scan_chain
         self.scan_fault_detect = scan_fault_detect
         self.fault_model = fault_model
         self.pattern_specification = pattern_specification
@@ -82,7 +91,8 @@ class ATPGConfig:
         return (f"ATPGConfig(top_module={self.top_module}, netlist_file={self.netlist_file}, tech_library={self.tech_library}, "
                 f"synthesized_files={self.synthesized_files}, spf_file={self.spf_file}, "
                 f"faults_file={self.faults_file}, summary_file={self.summary_file}, "
-                f"patterns_file={self.patterns_file}, scan_fault_detect={self.scan_fault_detect}, "
+                f"patterns_file={self.patterns_file}, scan_style={self.scan_style}, "
+                f"num_scan_chain={self.num_scan_chain}, scan_fault_detect={self.scan_fault_detect}, "
                 f"fault_model={self.fault_model}, pattern_specification={self.pattern_specification}, "
                 f"launch_cycle={self.launch_cycle}, capture_cycle={self.capture_cycle}, "
                 f"MUXClock_mode={self.MUXClock_mode}, fault_collapsing={self.fault_collapsing}, "
@@ -101,7 +111,8 @@ def parse_config(file_path: str) -> ATPGConfig:
 
     # Get all required sections
     default_section = config["DEFAULT"]
-    scan_chain_section = config["SCAN_CHAIN_FAULT"]
+    scan_chain_section = config["SCAN_CHAIN_INSERT"]
+    scan_fault_section = config["SCAN_CHAIN_FAULT"]
     fault_types_section = config["FAULT_TYPES"]
     pattern_section = config["PATTERN_OPTIONS"]
     transition_section = config["TRANSITION_FAULT_OPTIONS"]
@@ -119,8 +130,12 @@ def parse_config(file_path: str) -> ATPGConfig:
         summary_file=default_section.get("summary_file", ""),
         patterns_file=default_section.get("patterns_file", ""),
         
+        # SCAN_CHAIN_INSERT section
+        scan_style=scan_chain_section.get("scan_style", "multiplexed_flip_flop"),
+        num_scan_chain=int(scan_chain_section.get("num_scan_chain", "8")),
+        
         # SCAN_CHAIN_FAULT section
-        scan_fault_detect=parse_bool(scan_chain_section.get("scan_fault_detect")),
+        scan_fault_detect=parse_bool(scan_fault_section.get("scan_fault_detect")),
         
         # FAULT_TYPES section
         fault_model=fault_types_section.get("fault_model", ""),
