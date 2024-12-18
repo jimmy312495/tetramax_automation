@@ -1,8 +1,8 @@
 import os
-from atpg_parser import ATPGConfig, parse_config
+from config_parser import Config, parse_config
 
 class BaseATPGScriptGenerator:
-    def __init__(self, config: ATPGConfig):
+    def __init__(self, config: Config):
         self.config = config
     
     def set(self, file):
@@ -82,7 +82,7 @@ class BaseATPGScriptGenerator:
             self.write_output(file)
 
 class StuckATPGScriptGenerator(BaseATPGScriptGenerator):
-    def __init__(self, config: ATPGConfig):
+    def __init__(self, config: Config):
         super().__init__(config)
         
     def set_fault_option(self, file):
@@ -90,7 +90,7 @@ class StuckATPGScriptGenerator(BaseATPGScriptGenerator):
         file.write("set_faults -model Stuck\n")
         
 class TransitionATPGScriptGenerator(BaseATPGScriptGenerator):
-    def __init__(self, config: ATPGConfig):
+    def __init__(self, config: Config):
         super().__init__(config)
         if config.capture_cycle == None:
             self.config.capture_cycle = 4
@@ -106,7 +106,7 @@ class TransitionATPGScriptGenerator(BaseATPGScriptGenerator):
         file.write(f"set_atpg -capture {self.config.capture_cycle}\n\n")
         
 class BridgingATPGScriptGenerator(BaseATPGScriptGenerator):
-    def __init__(self, config: ATPGConfig):
+    def __init__(self, config: Config):
         super().__init__(config)
         
     def set_fault_option(self, file):
@@ -123,7 +123,7 @@ class BridgingATPGScriptGenerator(BaseATPGScriptGenerator):
 
 
 if __name__ == "__main__":
-    config_file = "define.txt"
+    config_file = "config.txt"
     config = parse_config(config_file)
 
     output_file = "atpg.tcl"

@@ -1,9 +1,9 @@
 import os
-from atpg_parser import ATPGConfig, parse_config
+from config_parser import Config, parse_config
 
 
 class DFTScriptGenerator:
-    def __init__(self, config: ATPGConfig):
+    def __init__(self, config: Config):
         self.config = config
         
     def mkdir(self, file):
@@ -99,7 +99,7 @@ class DFTScriptGenerator:
             self.write_reports(file)
 
 if __name__ == "__main__":
-    config_file = "define.txt"
+    config_file = "config.txt"
     config = parse_config(config_file)
 
     output_file = "dft_dc.tcl"

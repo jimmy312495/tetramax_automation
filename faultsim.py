@@ -1,8 +1,8 @@
 import os
-from atpg_parser import ATPGConfig, parse_config
+from config_parser import Config, parse_config
 
 class BaseFaultSimScriptGenerator:
-    def __init__(self, config: ATPGConfig):
+    def __init__(self, config: Config):
         self.config = config
     
     def read_netlist_model(self, file):
@@ -97,7 +97,7 @@ class BaseFaultSimScriptGenerator:
             self.write_output(file)
 
 class StuckFaultSimScriptGenerator(BaseFaultSimScriptGenerator):
-    def __init__(self, config: ATPGConfig):
+    def __init__(self, config: Config):
         super().__init__(config)
         
     def set_fault_option(self, file):
@@ -105,7 +105,7 @@ class StuckFaultSimScriptGenerator(BaseFaultSimScriptGenerator):
         file.write("set_faults -model Stuck\n")
         
 class TransitionFaultSimScriptGenerator(BaseFaultSimScriptGenerator):
-    def __init__(self, config: ATPGConfig):
+    def __init__(self, config: Config):
         super().__init__(config)
         if config.capture_cycle == None:
             self.config.capture_cycle = 4
@@ -121,7 +121,7 @@ class TransitionFaultSimScriptGenerator(BaseFaultSimScriptGenerator):
         file.write(f"set_atpg -capture {self.config.capture_cycle}\n\n")
         
 class BridgingFaultSimScriptGenerator(BaseFaultSimScriptGenerator):
-    def __init__(self, config: ATPGConfig):
+    def __init__(self, config: Config):
         super().__init__(config)
         
     def set_fault_option(self, file):
@@ -134,7 +134,7 @@ class BridgingFaultSimScriptGenerator(BaseFaultSimScriptGenerator):
 
 
 if __name__ == "__main__":
-    config_file = "define.txt"
+    config_file = "config.txt"
     config = parse_config(config_file)
 
     output_file = "faultsim.tcl"

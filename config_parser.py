@@ -42,7 +42,7 @@ from typing import Optional
 # simulation_sequential = true
 # simulation_sequential_nodrop = false
 
-class ATPGConfig:
+class Config:
     def __init__(self, 
                  top_module: str,
                  netlist_file: str,
@@ -99,7 +99,7 @@ class ATPGConfig:
                 f"auto_compression={self.auto_compression}, remove_fault={self.remove_fault}, "
                 f"simulation_sequential={self.simulation_sequential}, simulation_sequential_nodrop={self.simulation_sequential_nodrop})")
 
-def parse_config(file_path: str) -> ATPGConfig:
+def parse_config(file_path: str) -> Config:
     config = configparser.ConfigParser()
     config.read(file_path)
 
@@ -119,7 +119,7 @@ def parse_config(file_path: str) -> ATPGConfig:
     general_section = config["ATPG_GENERAL_OPTIONS"]
     simulation_section = config["SIMULATION_OPTION"]
 
-    return ATPGConfig(
+    return Config(
         # DEFAULT section
         top_module=default_section.get("top_module", ""),
         netlist_file=default_section.get("netlist_file", ""),
@@ -160,7 +160,7 @@ def parse_config(file_path: str) -> ATPGConfig:
 
 def main():
     import argparse
-    parser = argparse.ArgumentParser(description="Parse ATPG configuration from INI file.")
+    parser = argparse.ArgumentParser(description="Parse ATPG configuration from TXT file.")
     parser.add_argument("file_path", type=str, help="Path to the configuration file.")
     args = parser.parse_args()
 

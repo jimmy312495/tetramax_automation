@@ -27,13 +27,13 @@ fault_collapsing = true
 
 [TRANSITION_FAULT_OPTIONS]
 launch_cycle = any
-capture_cycle = 2
+capture_cycle = 4
 MUXClock_mode = false
 
 [ATPG_GENERAL_OPTIONS]
 auto_compression = true
 # optional: remove p% faults
-remove_fault = 50
+# remove_fault = 50
 
 [SIMULATION_OPTION]
 simulation_sequential = true
