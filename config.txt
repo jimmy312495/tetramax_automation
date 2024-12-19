@@ -2,8 +2,10 @@
 top_module = s1423
 netlist_file = ./Netlist/s1423_dft.v
 tech_library =  /home/raid7_2/course/cvsd/CBDK_IC_Contest_v2.5/Verilog/tsmc13_neg.v
+db_library = /home/raid7_2/course/cvsd/CBDK_IC_Contest/CIC/SynopsysDC/db
 synthesized_files = ../Test_s1423/Netlist/s1423_syn.v
 spf_file = ../Test_s1423/Netlist/s1423_dft.spf
+spef_file = ../Test_s1423/Netlist/s1423_dft.spef 
 faults_file = ../Test_s1423/Netlist/s1423.fault
 summary_file = ../Test_s1423/Netlist/s1423_report.rpt
 patterns_file = ../Test_s1423/Netlist/s1423.stil
@@ -17,9 +19,9 @@ num_scan_chain = 8
 # detect scan chain fault
 scan_fault_detect = false
 
-# supoorted fault types: stuck, transition, iddq, iddq_bridging, path_delay, hold_time, bridging, dynamic_bridging, dual_transition_bridging
+# supoorted fault types: stuck, transition, iddq, path_delay, hold_time, bridging
 [FAULT_TYPES]
-fault_model = transition
+fault_model = path_delay
 
 [PATTERN_OPTIONS]
 pattern_specification = full
@@ -32,6 +34,9 @@ MUXClock_mode = false
 
 [IDDQ_FAULT_OPTIONS]
 iddq_max_patterns = 20
+
+[PATH_DELAY_FAULT_OPTIONS]
+slack = 0.15
 
 [ATPG_GENERAL_OPTIONS]
 auto_compression = true

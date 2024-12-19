@@ -140,7 +140,57 @@ class BridgingATPGScriptGenerator(BaseATPGScriptGenerator):
         # Set ATPG
         file.write("set_atpg -optimize_bridge_strengths\n")
         file.write("set_atpg -merge high \n")
+        
+class PathDelayATPGScriptGenerator(BaseATPGScriptGenerator):
+    def __init__(self, config: Config):
+        super().__init__(config)
+        # generate critical paths
+        self.writePrimeTimeScript()
+        os.system("pt_shell -f pt_path.tcl")
+        
+    def set_fault_option(self, file):
+        # Set fault model
+        file.write("set_faults -model path_delay\n")
+        file.write(f"add_delay_paths {self.config.top_module}_delay.rpt\n\n")
+    
+    # def set_atpg_option(self, file):
+    #     # Set ATPG
+    #     file.write("set_atpg -merge high \n")
+    
+    def writePrimeTimeScript(self):
+        with open("pt_path.tcl", "w") as f:
+            f.write("remove_design -all\n")
+            f.write(f'set search_path ". {self.config.db_library}"\n')
+            f.write('set link_path "* typical.db  fast.db  slow.db"\n\n')
+            
+            f.write(f"read_verilog {self.config.netlist_file}\n")
+            f.write(f"link_design {self.config.top_module}\n")
+            f.write(f"read_parasitics {self.config.spef_file}\n")
+            f.write("set_operating_conditions typical -library typical\n\n")
+            
+            f.write(f"set CLK_PERIOD {self.config.slack}\n")
+            f.write("set CLK CK\n")
+            f.write("create_clock -period $CLK_PERIOD [get_ports $CLK]\n")
+            f.write("set_clock_transition -rise 0.05 [get_clocks $CLK]\n")
+            f.write("set_clock_transition -fall 0.03 [get_clocks $CLK]\n")
+            f.write("set_clock_latency -rise 0.01 [get_clocks $CLK]\n")
+            f.write("set_clock_latency -fall 0.03 [get_clocks $CLK]\n")
+            f.write("set_ideal_network [get_ports CK]\n\n")
+            
+            f.write("source pt2tmax.tcl\n")
+            f.write(f"write_delay_paths -max_paths 200 -nworst 1 -delay_type max ./{self.config.top_module}_delay.rpt\n\n")
+            
+            f.write("exit")
 
+class HoldTimeATPGScriptGenerator(PathDelayATPGScriptGenerator):
+    def __init__(self, config: Config):
+        super().__init__(config)
+    
+    def set_fault_option(self, file):
+        # Set fault model
+        file.write("set_faults -model hold_time\n")
+        file.write(f"add_delay_paths {self.config.top_module}_delay.rpt\n\n")
+        
 
 if __name__ == "__main__":
     config_file = "config.txt"
@@ -154,9 +204,15 @@ if __name__ == "__main__":
         generator = TransitionATPGScriptGenerator(config)
     elif config.fault_model == "bridging":
         generator = BridgingATPGScriptGenerator(config)
+    elif config.fault_model == "iddq":
+        generator = IDDQATPGScriptGenerator(config)
+    elif config.fault_model == "path_delay":
+        generator = PathDelayATPGScriptGenerator(config)
+    elif config.fault_model == "hold_time":
+        generator = HoldTimeATPGScriptGenerator(config)
     else:
         generator = BaseATPGScriptGenerator(config)
-        
+    
     generator.generate_tcl(output_file)
 
     print(f"TCL script generated successfully: {os.path.abspath(output_file)}")

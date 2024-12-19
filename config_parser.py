@@ -46,6 +46,9 @@ from typing import Optional
 # max_patterns = 1000
 # toggle = true
 
+# [PATH_DELAY_FAULT_OPTIONS]
+# slack = 0.15
+
 class Config:
     def __init__(self, 
                  top_module: str,
@@ -69,7 +72,8 @@ class Config:
                  remove_fault: Optional[int],
                  simulation_sequential: bool,
                  simulation_sequential_nodrop: bool,
-                 iddq_max_patterns: int = 1000):
+                 iddq_max_patterns: int = 1000,
+                 slack: float = 0.15):
         self.top_module = top_module
         self.netlist_file = netlist_file
         self.tech_library = tech_library
@@ -92,6 +96,7 @@ class Config:
         self.simulation_sequential = simulation_sequential
         self.simulation_sequential_nodrop = simulation_sequential_nodrop
         self.iddq_max_patterns = iddq_max_patterns
+        self.slack = slack
 
     def __repr__(self):
         return (f"ATPGConfig(top_module={self.top_module}, netlist_file={self.netlist_file}, tech_library={self.tech_library}, "
@@ -104,7 +109,7 @@ class Config:
                 f"MUXClock_mode={self.MUXClock_mode}, fault_collapsing={self.fault_collapsing}, "
                 f"auto_compression={self.auto_compression}, remove_fault={self.remove_fault}, "
                 f"simulation_sequential={self.simulation_sequential}, simulation_sequential_nodrop={self.simulation_sequential_nodrop}, "
-                f"iddq_max_patterns={self.iddq_max_patterns})")
+                f"iddq_max_patterns={self.iddq_max_patterns}, slack={self.slack})")
 
 def parse_config(file_path: str) -> Config:
     config = configparser.ConfigParser()
@@ -126,6 +131,7 @@ def parse_config(file_path: str) -> Config:
     general_section = config["ATPG_GENERAL_OPTIONS"]
     simulation_section = config["SIMULATION_OPTION"]
     iddq_section = config["IDDQ_FAULT_OPTIONS"]
+    path_delay_section = config["PATH_DELAY_FAULT_OPTIONS"]
 
     return Config(
         # DEFAULT section
@@ -166,7 +172,10 @@ def parse_config(file_path: str) -> Config:
         simulation_sequential_nodrop=parse_bool(simulation_section.get("simulation_sequential_nodrop")),
 
         # IDDQ_FAULT_OPTIONS section
-        iddq_max_patterns=iddq_section.getint("max_patterns", 1000)
+        iddq_max_patterns=iddq_section.getint("max_patterns", 1000),
+
+        # PATH_DELAY_FAULT_OPTIONS section
+        slack=float(path_delay_section.get("slack", "0.15"))
     )
 
 def main():
