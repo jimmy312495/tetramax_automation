@@ -8,6 +8,7 @@ from typing import Optional
 # db_library = /home/raid7_2/course/cvsd/CBDK_IC_Contest/CIC/SynopsysDC/db
 # synthesized_files = ../Test_s1423/Netlist/s1423_syn.v
 # spf_file = ../Test_s1423/Netlist/s1423.spf
+# spef_file = ../Test_s1423/Netlist/s1423.spef
 # faults_file = ../Test_s1423/Netlist/s1423.fault
 # summary_file = ../Test_s1423/Netlist/s1423_ATPG_report.rpt
 # patterns_file = ../Test_s1423/Netlist/s1423.stil
@@ -63,7 +64,8 @@ class Config:
                  tech_library: str,
                  db_library: str,
                  synthesized_files: str, 
-                 spf_file: str, 
+                 spf_file: str,
+                 spef_file: str,
                  faults_file: str, 
                  summary_file: str, 
                  patterns_file: str,
@@ -93,6 +95,7 @@ class Config:
         self.db_library = db_library
         self.synthesized_files = synthesized_files
         self.spf_file = spf_file
+        self.spef_file = spef_file
         self.faults_file = faults_file
         self.summary_file = summary_file
         self.patterns_file = patterns_file
@@ -120,7 +123,7 @@ class Config:
     def __repr__(self):
         return (f"ATPGConfig(top_module={self.top_module}, netlist_file={self.netlist_file}, tech_library={self.tech_library}, "
                 f"db_library={self.db_library}, synthesized_files={self.synthesized_files}, spf_file={self.spf_file}, "
-                f"faults_file={self.faults_file}, summary_file={self.summary_file}, "
+                f"spef_file={self.spef_file}, faults_file={self.faults_file}, summary_file={self.summary_file}, "
                 f"patterns_file={self.patterns_file}, scan_style={self.scan_style}, "
                 f"num_scan_chain={self.num_scan_chain}, scan_fault_detect={self.scan_fault_detect}, "
                 f"fault_model={self.fault_model}, pattern_specification={self.pattern_specification}, "
@@ -164,6 +167,7 @@ def parse_config(file_path: str) -> Config:
         db_library=default_section.get("db_library", ""),
         synthesized_files=default_section.get("synthesized_files", ""),
         spf_file=default_section.get("spf_file", ""),
+        spef_file=default_section.get("spef_file", ""),
         faults_file=default_section.get("faults_file", ""),
         summary_file=default_section.get("summary_file", ""),
         patterns_file=default_section.get("patterns_file", ""),
@@ -176,7 +180,7 @@ def parse_config(file_path: str) -> Config:
         scan_fault_detect=parse_bool(scan_fault_section.get("scan_fault_detect")),
         
         # FAULT_TYPES section
-        fault_model=fault_types_section.get("fault_model", ""),
+        fault_model=fault_types_section.get("fault_model", "stuck"),
         
         # PATTERN_OPTIONS section
         pattern_specification=pattern_section.get("pattern_specification", ""),
@@ -185,7 +189,7 @@ def parse_config(file_path: str) -> Config:
         # TRANSITION_FAULT_OPTIONS section
         launch_cycle=transition_section.get("launch_cycle", "any"),
         capture_cycle=parse_optional_int(transition_section.get("capture_cycle", "4")),
-        MUXClock_mode=parse_bool(transition_section.get("MUXClock_mode")),
+        MUXClock_mode=parse_bool(transition_section.get("MUXClock_mode", "false")),
         
         # ATPG_GENERAL_OPTIONS section
         auto_compression=parse_bool(general_section.get("auto_compression")),

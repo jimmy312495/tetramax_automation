@@ -141,6 +141,8 @@ class IDDQATPGScriptGenerator(BaseATPGScriptGenerator):
 class BridgingATPGScriptGenerator(BaseATPGScriptGenerator):
     def __init__(self, config: Config):
         super().__init__(config)
+        # generate node.txt
+        os.system(f"python3 gen_bridging_site.py ./Netlist/{self.config.top_module}_dft.v")
         
     def set_fault_option(self, file):
         # Set fault model
@@ -148,7 +150,7 @@ class BridgingATPGScriptGenerator(BaseATPGScriptGenerator):
     
     def add_fault(self, file):
         # override default
-        file.write("add_faults -node_file nodes.txt \n\n")
+        file.write("add_faults -node_file nodes.txt\n\n")
     
     def set_atpg_option(self, file):
         # Set ATPG
