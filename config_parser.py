@@ -5,6 +5,7 @@ from typing import Optional
 # top_module = s1423
 # netlist_file = ./Netlist/s1423_dft.v
 # tech_library =  /home/raid7_2/course/cvsd/CBDK_IC_Contest_v2.5/Verilog/tsmc13_neg.v
+# db_library = /home/raid7_2/course/cvsd/CBDK_IC_Contest/CIC/SynopsysDC/db
 # synthesized_files = ../Test_s1423/Netlist/s1423_syn.v
 # spf_file = ../Test_s1423/Netlist/s1423.spf
 # faults_file = ../Test_s1423/Netlist/s1423.fault
@@ -43,17 +44,24 @@ from typing import Optional
 # simulation_sequential_nodrop = false
 
 # [IDDQ_FAULT_OPTIONS]
-# max_patterns = 1000
-# toggle = true
+# iddq_max_patterns = 20
+# iddq_toggle = true
+# iddq_float = true
+# iddq_strong = true
+# iddq_interval_size = 1
 
 # [PATH_DELAY_FAULT_OPTIONS]
 # slack = 0.15
+
+# [STUCK_FAULT_OPTIONS]
+# N_detect = 1
 
 class Config:
     def __init__(self, 
                  top_module: str,
                  netlist_file: str,
-                 tech_library: str, 
+                 tech_library: str,
+                 db_library: str,
                  synthesized_files: str, 
                  spf_file: str, 
                  faults_file: str, 
@@ -73,10 +81,16 @@ class Config:
                  simulation_sequential: bool,
                  simulation_sequential_nodrop: bool,
                  iddq_max_patterns: int = 1000,
+                 iddq_toggle: bool = True,
+                 iddq_float: bool = True,
+                 iddq_strong: bool = True,
+                 iddq_interval_size: int = 1,
+                 n_detect: int = 1,
                  slack: float = 0.15):
         self.top_module = top_module
         self.netlist_file = netlist_file
         self.tech_library = tech_library
+        self.db_library = db_library
         self.synthesized_files = synthesized_files
         self.spf_file = spf_file
         self.faults_file = faults_file
@@ -96,11 +110,16 @@ class Config:
         self.simulation_sequential = simulation_sequential
         self.simulation_sequential_nodrop = simulation_sequential_nodrop
         self.iddq_max_patterns = iddq_max_patterns
+        self.iddq_toggle = iddq_toggle
+        self.iddq_float = iddq_float
+        self.iddq_strong = iddq_strong
+        self.iddq_interval_size = iddq_interval_size
+        self.n_detect = n_detect
         self.slack = slack
 
     def __repr__(self):
         return (f"ATPGConfig(top_module={self.top_module}, netlist_file={self.netlist_file}, tech_library={self.tech_library}, "
-                f"synthesized_files={self.synthesized_files}, spf_file={self.spf_file}, "
+                f"db_library={self.db_library}, synthesized_files={self.synthesized_files}, spf_file={self.spf_file}, "
                 f"faults_file={self.faults_file}, summary_file={self.summary_file}, "
                 f"patterns_file={self.patterns_file}, scan_style={self.scan_style}, "
                 f"num_scan_chain={self.num_scan_chain}, scan_fault_detect={self.scan_fault_detect}, "
@@ -109,7 +128,10 @@ class Config:
                 f"MUXClock_mode={self.MUXClock_mode}, fault_collapsing={self.fault_collapsing}, "
                 f"auto_compression={self.auto_compression}, remove_fault={self.remove_fault}, "
                 f"simulation_sequential={self.simulation_sequential}, simulation_sequential_nodrop={self.simulation_sequential_nodrop}, "
-                f"iddq_max_patterns={self.iddq_max_patterns}, slack={self.slack})")
+                f"iddq_max_patterns={self.iddq_max_patterns}, iddq_toggle={self.iddq_toggle}, "
+                f"iddq_float={self.iddq_float}, iddq_strong={self.iddq_strong}, "
+                f"iddq_interval_size={self.iddq_interval_size}, n_detect={self.n_detect}, "
+                f"slack={self.slack})")
 
 def parse_config(file_path: str) -> Config:
     config = configparser.ConfigParser()
@@ -132,12 +154,14 @@ def parse_config(file_path: str) -> Config:
     simulation_section = config["SIMULATION_OPTION"]
     iddq_section = config["IDDQ_FAULT_OPTIONS"]
     path_delay_section = config["PATH_DELAY_FAULT_OPTIONS"]
+    stuck_section = config["STUCK_FAULT_OPTIONS"]
 
     return Config(
         # DEFAULT section
         top_module=default_section.get("top_module", ""),
         netlist_file=default_section.get("netlist_file", ""),
         tech_library=default_section.get("tech_library", ""),
+        db_library=default_section.get("db_library", ""),
         synthesized_files=default_section.get("synthesized_files", ""),
         spf_file=default_section.get("spf_file", ""),
         faults_file=default_section.get("faults_file", ""),
@@ -172,7 +196,14 @@ def parse_config(file_path: str) -> Config:
         simulation_sequential_nodrop=parse_bool(simulation_section.get("simulation_sequential_nodrop")),
 
         # IDDQ_FAULT_OPTIONS section
-        iddq_max_patterns=iddq_section.getint("max_patterns", 1000),
+        iddq_max_patterns=iddq_section.getint("iddq_max_patterns", 1000),
+        iddq_toggle=parse_bool(iddq_section.get("iddq_toggle")),
+        iddq_float=parse_bool(iddq_section.get("iddq_float")),
+        iddq_strong=parse_bool(iddq_section.get("iddq_strong")),
+        iddq_interval_size=iddq_section.getint("iddq_interval_size", 1),
+
+        # STUCK_FAULT_OPTIONS section
+        n_detect=stuck_section.getint("N_detect", 1),
 
         # PATH_DELAY_FAULT_OPTIONS section
         slack=float(path_delay_section.get("slack", "0.15"))

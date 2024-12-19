@@ -30,8 +30,8 @@ class BaseATPGScriptGenerator:
         if self.config.pattern_specification == "partial":
             file.write("set_atpg -fill X\n")
         
-        file.write("set_atpg -decision random\n")
-        self.set_atpg_option(file)
+        # file.write("set_atpg -decision random\n")
+        # self.set_atpg_option(file)
     
     def set_atpg_option(self, file):
         # inheritance
@@ -69,9 +69,9 @@ class BaseATPGScriptGenerator:
     def run_atpg(self, file):
         # Run ATPG
         if self.config.auto_compression:
-            file.write("run_atpg -auto_compression\n\n") 
+            file.write(f"run_atpg -auto_compression\n\n") 
         else:
-            file.write("run_atpg\n\n")
+            file.write(f"run_atpg\n\n")
 
     def generate_tcl(self, output_file):
         with open(output_file, "w") as file:
@@ -79,6 +79,7 @@ class BaseATPGScriptGenerator:
             self.set_atpg(file)
             self.set_fault(file)
             self.set_delay_option(file)
+            self.set_atpg_option(file)
             self.add_fault(file)
             self.run_atpg(file)
             self.write_output(file)
@@ -90,6 +91,13 @@ class StuckATPGScriptGenerator(BaseATPGScriptGenerator):
     def set_fault_option(self, file):
         # Set fault model
         file.write("set_faults -model Stuck\n")
+    
+    def run_atpg(self, file):
+        # Run ATPG with n-detect
+        if self.config.auto_compression:
+            file.write(f"run_atpg -auto_compression -ndetect {self.config.n_detect}\n\n") 
+        else:
+            file.write(f"run_atpg -ndetect {self.config.n_detect}\n\n")
         
 class TransitionATPGScriptGenerator(BaseATPGScriptGenerator):
     def __init__(self, config: Config):
@@ -102,7 +110,7 @@ class TransitionATPGScriptGenerator(BaseATPGScriptGenerator):
         file.write("set_faults -model transition\n")
     
     def set_delay_option(self, file):
-        file.write("set_delay -launch system_clock\n\n")
+        file.write(f"set_delay -launch {self.config.launch_cycle}\n\n")
     
     def set_atpg_option(self, file):
         file.write(f"set_atpg -capture {self.config.capture_cycle}\n\n")
@@ -116,7 +124,13 @@ class IDDQATPGScriptGenerator(BaseATPGScriptGenerator):
         
     def set_fault_option(self, file):
         file.write("set_faults -model iddq\n")
-        file.write("set_iddq -toggle\n\n")
+        if self.config.iddq_toggle:
+            file.write("set_iddq -toggle\n")
+        if self.config.iddq_float is False:
+            file.write("set_iddq nofloat\n")
+        if self.config.iddq_strong is False:
+            file.write("set_iddq nostrong\n")
+        file.write(f"set_iddq -interval_size {self.config.iddq_interval_size}\n") 
     
     def set_delay_option(self, file):
         file.write("set_delay -launch system_clock\n\n")

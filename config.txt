@@ -21,11 +21,14 @@ scan_fault_detect = false
 
 # supoorted fault types: stuck, transition, iddq, path_delay, hold_time, bridging
 [FAULT_TYPES]
-fault_model = path_delay
+fault_model = iddq
 
 [PATTERN_OPTIONS]
 pattern_specification = full
 fault_collapsing = true
+
+[STUCK_FAULT_OPTIONS]
+N_detect = 1
 
 [TRANSITION_FAULT_OPTIONS]
 launch_cycle = any
@@ -34,6 +37,10 @@ MUXClock_mode = false
 
 [IDDQ_FAULT_OPTIONS]
 iddq_max_patterns = 20
+iddq_toggle = true
+iddq_float = true
+iddq_strong = true
+iddq_interval_size = 1
 
 [PATH_DELAY_FAULT_OPTIONS]
 slack = 0.15
