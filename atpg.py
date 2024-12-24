@@ -146,7 +146,7 @@ class BridgingATPGScriptGenerator(BaseATPGScriptGenerator):
         
     def set_fault_option(self, file):
         # Set fault model
-        file.write("set_faults -model transition\n")
+        file.write("set_faults -model bridging\n")
     
     def add_fault(self, file):
         # override default
