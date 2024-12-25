@@ -150,6 +150,7 @@ class BridgingFaultSimScriptGenerator(BaseFaultSimScriptGenerator):
         # override default
         file.write("add_faults -node_file nodes.txt \n\n")
 
+## Path-delay and Hold Time don't have
 
 if __name__ == "__main__":
     config_file = "config.txt"
@@ -164,6 +165,7 @@ if __name__ == "__main__":
     elif config.fault_model == "bridging":
         generator = BridgingFaultSimScriptGenerator(config)
     else:
+        raise NameError("Do not support other fault models")
         generator = BaseFaultSimScriptGenerator(config)
         
     generator.generate_tcl(output_file)
