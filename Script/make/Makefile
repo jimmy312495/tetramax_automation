@@ -49,4 +49,4 @@ faultsim: $(FAULT_SIM_TCL)
 .PHONY: clean
 clean:
 	@echo "Cleaning up..."
-	@rm -f *.run *.tcl
+	@rm -f *.run ../tcl/atpg.tcl ../tcl/dft_dc.tcl ../tcl/faultsim.tcl
