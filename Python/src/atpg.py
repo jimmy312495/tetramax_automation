@@ -206,13 +206,20 @@ class HoldTimeATPGScriptGenerator(PathDelayATPGScriptGenerator):
         # Set fault model
         file.write("set_faults -model hold_time\n")
         file.write(f"add_delay_paths {self.config.top_module}_delay.rpt\n\n")
+
+class ExperimentATPGScriptGenerator(BaseATPGScriptGenerator):
+    def __init__(self, config: Config):
+        super().__init__(config)
+    
+    def set_fault_option(self, file):
+        file.write(f"set_static {self.config.experiment_static}")
         
 
 if __name__ == "__main__":
-    config_file = "config.txt"
+    config_file = "../../Python/src/config.txt"
     config = parse_config(config_file)
 
-    output_file = "atpg.tcl"
+    output_file = "../../Script/tcl/atpg.tcl"
     
     if config.fault_model == "stuck":
         generator = StuckATPGScriptGenerator(config)

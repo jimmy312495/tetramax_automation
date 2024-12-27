@@ -153,10 +153,10 @@ class BridgingFaultSimScriptGenerator(BaseFaultSimScriptGenerator):
 ## Path-delay and Hold Time don't have
 
 if __name__ == "__main__":
-    config_file = "config.txt"
+    config_file = "../../Python/src/config.txt"
     config = parse_config(config_file)
 
-    output_file = "faultsim.tcl"
+    output_file = "../../Script/tcl/faultsim.tcl"
     
     if config.fault_model == "stuck":
         generator = StuckFaultSimScriptGenerator(config)

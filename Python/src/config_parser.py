@@ -96,7 +96,8 @@ class Config:
                  path_delay_slack: float = 0.15,
                  bridging_optimize_bridge_strengths: bool = True,
                  path_delay_max_paths: int = 200,
-                 fault_coverage: int = 100):
+                 fault_coverage: int = 100,
+                 ):
         # error detect
         if not all([top_module, netlist_file, tech_library, db_library, synthesized_files, spf_file, faults_file, summary_file, patterns_file]):
             raise ValueError("All required parameters must be non-empty strings.")
@@ -202,7 +203,7 @@ def parse_config(file_path: str) -> Config:
         pattern_specification=pattern_section.get("pattern_specification", "full"),
         fault_collapsing=parse_bool(pattern_section.get("fault_collapsing", "true")),
         fault_coverage=pattern_section.getint("fault_coverage", 100),
-        
+
         # TRANSITION_FAULT_OPTIONS section
         launch_cycle=transition_section.get("launch_cycle", "any"),
         capture_cycle=transition_section.getint("capture_cycle", 4),

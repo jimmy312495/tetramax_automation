@@ -25,11 +25,11 @@ DCSHELL := dc_shell -f
 all: gentcl scinsert atpg faultsim
 
 # Add error checking for critical commands
-gentcl: dft.py atpg.py faultsim.py
+gentcl: ../../Python/src/dft.py ../../Python/src/atpg.py ../../Python/src/faultsim.py
 	@echo "Generating tcl files..."
-	@python3 dft.py || (echo "Error generating dft.tcl"; exit 1)
-	@python3 atpg.py || (echo "Error generating atpg.tcl"; exit 1)
-	@python3 faultsim.py || (echo "Error generating faultsim.tcl"; exit 1)
+	@python3 ../../Python/src/dft.py || (echo "Error generating dft.tcl"; exit 1)
+	@python3 ../../Python/src/atpg.py || (echo "Error generating atpg.tcl"; exit 1)
+	@python3 ../../Python/src/faultsim.py || (echo "Error generating faultsim.tcl"; exit 1)
 
 # Rule to execute dft_dc.tcl with dc_shell
 scinsert: $(DFT_TCL)

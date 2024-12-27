@@ -99,10 +99,10 @@ class DFTScriptGenerator:
             self.write_reports(file)
 
 if __name__ == "__main__":
-    config_file = "config.txt"
+    config_file = "../../Python/src/config.txt"
     config = parse_config(config_file)
 
-    output_file = "dft_dc.tcl"
+    output_file = "../../Script/tcl/dft_dc.tcl"
 
     generator = DFTScriptGenerator(config)
         
